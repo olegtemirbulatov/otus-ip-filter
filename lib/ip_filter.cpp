@@ -1,12 +1,4 @@
-#include <cassert>
-#include <cstdlib>
-#include <iostream>
-#include <string>
-#include <vector>
-#include <cstdint>
-#include <algorithm>
-
-using ip_pool_t = std::vector<std::vector<std::string>>;
+#include "ip_filter.h"
 
 std::vector<std::string> split(const std::string &str, char d)
 {
@@ -38,8 +30,8 @@ void reverse_sort(ip_pool_t& ip_pool)
         uint32_t ip_as_number = 0;
         for (uint32_t i = 0; i < ip_size; ++i)
         {
-            auto num = static_cast<uint32_t>(std::stoul(ip.at(i)));
-            if (num < 0 || num > 255)
+            uint32_t num = static_cast<uint32_t>(std::stoul(ip.at(i)));
+            if (num > 255)
             {
                 throw std::runtime_error("Invalid ip part value");
             }
@@ -61,7 +53,7 @@ void reverse_sort(ip_pool_t& ip_pool)
     }
 }
 
-void print_ip(ip_pool_t::const_iterator ip_iter)
+void print_ip_by_iter(ip_pool_t::const_iterator ip_iter)
 {
     for(auto ip_part = ip_iter->cbegin(); ip_part != ip_iter->cend(); ++ip_part)
     {
@@ -74,68 +66,43 @@ void print_ip(ip_pool_t::const_iterator ip_iter)
     std::cout << std::endl;
 }
 
-void filter(const std::string& first, const ip_pool_t& ip_pool)
+ip_pool_t filter(const std::string& first, const ip_pool_t& ip_pool)
 {
+    ip_pool_t filtered;
     for (auto ip_iter = ip_pool.cbegin(); ip_iter != ip_pool.cend(); ++ip_iter)
     {
         if (ip_iter->at(0) == first)
         {
-            print_ip(ip_iter);
+            filtered.push_back(*ip_iter);
         }
     }
+    return filtered;
 }
 
-void filter(const std::string& first, const std::string& second, const ip_pool_t& ip_pool)
+ip_pool_t filter(const std::string& first, const std::string& second, const ip_pool_t& ip_pool)
 {
+    ip_pool_t filtered;
     for (auto ip_iter = ip_pool.cbegin(); ip_iter != ip_pool.cend(); ++ip_iter)
     {
         if (ip_iter->at(0) == first && ip_iter->at(1) == second)
         {
-            print_ip(ip_iter);
+            filtered.push_back(*ip_iter);
         }
     }
+    return filtered;
 }
 
-void filter_any(const std::string& value, const ip_pool_t& ip_pool)
+ip_pool_t filter_any(const std::string& value, const ip_pool_t& ip_pool)
 {
+    ip_pool_t filtered;
     for (auto ip_iter = ip_pool.cbegin(); ip_iter != ip_pool.cend(); ++ip_iter)
     {
         if (std::any_of(ip_iter->cbegin(), ip_iter->cend(), 
                 [&value](const std::string& str){ return str == value; })
             )
         {
-            print_ip(ip_iter);
+            filtered.push_back(*ip_iter);
         }
     }
-}
-
-int main()
-{
-    try
-    {
-        ip_pool_t ip_pool;
-
-        for(std::string line; std::getline(std::cin, line);)
-        {
-            std::vector<std::string> v = split(line, '\t');
-            ip_pool.push_back(split(v.at(0), '.'));
-        }
-
-        reverse_sort(ip_pool);
-
-        for(auto ip = ip_pool.cbegin(); ip != ip_pool.cend(); ++ip)
-        {
-            print_ip(ip);
-        }
-        
-        filter("1", ip_pool);
-        filter("46", "70", ip_pool);
-        filter_any("46", ip_pool);
-    }
-    catch(const std::exception &e)
-    {
-        std::cerr << e.what() << std::endl;
-    }
-
-    return 0;
+    return filtered;
 }
