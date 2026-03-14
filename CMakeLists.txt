@@ -3,11 +3,11 @@ cmake_minimum_required(VERSION 3.12)
 set(PATCH_VERSION "1" CACHE INTERNAL "Patch version")
 set(PROJECT_VESRION 0.0.${PATCH_VERSION})
 
-project(ip_filter VERSION ${PROJECT_VESRION})
+project(ip_filter_proj VERSION ${PROJECT_VESRION})
 
 option(WITH_GOOGLE_TEST "Whether to build Google test" ON)
 
-add_executable(ipfilter_cli main.cpp)
+add_executable(ip_filter main.cpp)
 add_library(ipfilter lib/ip_filter.h lib/ip_filter.cpp)
 
 set_target_properties(ipfilter PROPERTIES
@@ -15,7 +15,7 @@ set_target_properties(ipfilter PROPERTIES
     CXX_STANDARD_REQUIRED ON
 )
 
-target_include_directories(ipfilter_cli
+target_include_directories(ip_filter
     PRIVATE "${CMAKE_SOURCE_DIR}/lib"
 )
 
@@ -23,7 +23,7 @@ target_include_directories(ipfilter
     PRIVATE "${CMAKE_BINARY_DIR}"
 )
 
-target_link_libraries(ipfilter_cli PRIVATE
+target_link_libraries(ip_filter PRIVATE
     ipfilter
 )
 
@@ -66,7 +66,7 @@ else ()
     target_compile_options(ipfilter PRIVATE
         -Wall -Wextra -pedantic -Werror
     )
-    target_compile_options(ipfilter_cli PRIVATE
+    target_compile_options(ip_filter PRIVATE
         -Wall -Wextra -pedantic -Werror
     )
     if(WITH_GOOGLE_TEST)
@@ -76,7 +76,7 @@ else ()
     endif()
 endif()
 
-install(TARGETS ipfilter RUNTIME DESTINATION bin)
+install(TARGETS ip_filter RUNTIME DESTINATION bin)
 
 set(CPACK_GENERATOR DEB)
 set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
