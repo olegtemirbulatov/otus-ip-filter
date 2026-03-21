@@ -19,22 +19,15 @@ template<typename... Args>
 ip_pool_t filter(const ip_pool_t& ip_pool, const Args... octet_values)
 {
     std::vector<std::string> ip_octets = { octet_values... };
-    
     ip_pool_t filtered;
-    bool fit;
+    
     for (const auto& ip : ip_pool)
     {
-        fit = true;
-        for (size_t i = 0; i < ip_octets.size(); ++i)
+        auto temp_ip = std::vector<std::string>(ip.begin(), ip.begin() + ip_octets.size());
+        if (ip_octets == temp_ip)
         {
-            if (ip.at(i) != ip_octets.at(i))
-            {
-                fit = false;
-                break;
-            }
-        }
-        if (fit)
             filtered.push_back(ip);
+        }
     }
 
     return filtered;
