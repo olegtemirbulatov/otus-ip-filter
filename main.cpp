@@ -8,14 +8,14 @@ int main()
 
         for(std::string line; std::getline(std::cin, line);)
         {
-            std::vector<std::string> v = split(line, '\t');
+            ip_t v = split(line, '\t');
             ip_pool.push_back(split(v.at(0), '.'));
         }
 
         reverse_sort(ip_pool);
-        ip_pool_t filtered_by_first            = filter("1", ip_pool);
-        ip_pool_t filtered_by_first_and_second = filter("46", "70", ip_pool);
-        ip_pool_t filtered_by_any              = filter_any("46", ip_pool);
+        ip_pool_t filtered_by_first            = filter(ip_pool, "1");
+        ip_pool_t filtered_by_first_and_second = filter(ip_pool, "46", "70");
+        ip_pool_t filtered_by_any              = filter_any(ip_pool, "46");
 
         ip_pool.insert(ip_pool.end(), filtered_by_first.begin(), filtered_by_first.end());
         ip_pool.insert(ip_pool.end(), filtered_by_first_and_second.begin(), filtered_by_first_and_second.end());

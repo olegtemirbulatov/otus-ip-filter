@@ -5,7 +5,7 @@
 
 ip_pool_t make_input_ip_pool()
 {
-    static const std::vector<std::string> ip_strings = {
+    static const ip_t ip_strings = {
         "46.70.113.73",
         "73.87.94.81",
         "5.62.159.140",
@@ -57,7 +57,7 @@ TEST(TestIpSort, TestFilterByFirst)
     };
 
     ip_pool_t ip_pool          = make_input_ip_pool();
-    ip_pool_t filtered_ip_pool = filter("5", ip_pool);
+    ip_pool_t filtered_ip_pool = filter(ip_pool, std::string("5"));
     reverse_sort(filtered_ip_pool);
 
     ASSERT_EQ(filtered_ip_pool, ip_pool_expected);
@@ -70,7 +70,7 @@ TEST(TestIpSort, TestFilterByFirstAndSecond)
     };
 
     ip_pool_t ip_pool          = make_input_ip_pool();
-    ip_pool_t filtered_ip_pool = filter("5", "189", ip_pool);
+    ip_pool_t filtered_ip_pool = filter(ip_pool, std::string("5"), std::string("189"));
     reverse_sort(filtered_ip_pool);
 
     ASSERT_EQ(filtered_ip_pool, ip_pool_expected);
@@ -83,7 +83,7 @@ TEST(TestIpSort, TestFilterByAny)
     };
 
     ip_pool_t ip_pool          = make_input_ip_pool();
-    ip_pool_t filtered_ip_pool = filter_any("215", ip_pool);
+    ip_pool_t filtered_ip_pool = filter_any(ip_pool, std::string("215"));
     reverse_sort(filtered_ip_pool);
 
     ASSERT_EQ(filtered_ip_pool, ip_pool_expected);
